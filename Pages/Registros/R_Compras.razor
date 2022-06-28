@@ -1,0 +1,79 @@
+﻿@page "/Compra"
+@page "/Compra/{CompraId:int}"
+
+@inject ComprasBLL comprasBLL
+@inject ProductosBLL productosBLL
+
+
+<EditForm Model="compra" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="card text-dark bg-light mb-3 shadow-lg">
+
+        <div class="card-header">
+            <h3>Registro de Compras</h3>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row justify-content-between">
+
+                <div class="col-3">
+                    <label>CompraId</label>
+                    <div class="input-group mb-3">
+                        <InputNumber class="form-control" @bind-Value="compra.CompraId" />
+                        <button class="btn btn-outline-primary" type="button" @onclick="Buscar"> <i class="oi oi-magnifying-glass" /> </button>
+                    </div>
+                </div>
+
+                <div class="col-3">
+                    <label>Fecha</label>
+                    <InputDate class="form-control" @bind-Value="compra.Fecha" />
+                    <ValidationMessage For="@(() => compra.Fecha)" />
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card-footer d-flex justify-content-center">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-primary" > <i class="oi oi-file" /> Nuevo</button>
+                <button type="submit" class="btn btn-success"> <i class="oi oi-document" /> Guardar</button>
+                <button type="button" class="btn btn-danger"><i class="oi oi-trash" /> Eliminar</button>
+            </div>
+        </div>
+
+    </div>
+</EditForm>
+@code {
+    [Parameter]
+    public int CompraId { get; set; }
+
+    public Compras compra { get; set; } = new Compras();
+    public ComprasDetalle detalle { get; set; } = new ComprasDetalle();
+
+    public List<Productos> ProductList { get; set; } = new List<Productos>();
+
+    protected override void OnInitialized()
+    {
+        ProductList = productosBLL.GetList();
+
+        if (CompraId > 0)
+        {
+            compra.CompraId = CompraId;
+            Buscar();
+        }
+    }
+
+    void Buscar()
+    {
+        var encontrado = comprasBLL.Buscar(compra.CompraId);
+        if (encontrado != null)
+            compra = encontrado;
+    }
+
+    void Guardar()
+    {
+        comprasBLL.Guardar(this.compra);
+    }
+}
