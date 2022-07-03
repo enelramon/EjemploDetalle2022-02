@@ -12,6 +12,11 @@ namespace EjemploDetalle2022_02.DAL
         {
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.EnableSensitiveDataLogging();
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
              modelBuilder.Entity<Productos>().HasData(

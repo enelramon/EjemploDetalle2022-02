@@ -25,6 +25,13 @@ namespace EjemploDetalle2022_02.Models
         public double Cantidad { get; set; }
         public double Costo { get; set; }
 
+        [NotMapped]
+        public double Importe
+        {
+            get { return Cantidad * Costo; } 
+        }
+
+
     }
 
     

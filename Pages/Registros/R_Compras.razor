@@ -3,6 +3,7 @@
 
 @inject ComprasBLL comprasBLL
 @inject ProductosBLL productosBLL
+@inject NotificationService notificationService
 
 
 <EditForm Model="compra" OnValidSubmit="Guardar">
@@ -33,13 +34,85 @@
                 </div>
             </div>
 
+
+            <fieldset class="border-success">
+
+                <div class="row">
+
+                    <div class="col-2">
+                        <label>Producto</label>
+                        <InputSelect class="form-select" @bind-Value="detalle.ProductoId">
+                            <option value="0" disabled> Seleccione </option>
+                            @foreach (var producto in ProductList)
+                            {
+                                <option value="@producto.ProductoId"> @producto.Descripcion</option>
+                            }
+                        </InputSelect>
+
+                    </div>
+
+                    <div class="col-2">
+                        <label>Cantidad</label>
+                        <InputNumber class="form-control" @bind-Value="detalle.Cantidad" />
+                    </div>
+
+                    <div class="col-2">
+                        <button type="button" class="btn btn-success" @onclick="AgregarDetalle">
+                            <span class="oi oi-plus">Agregar</span>
+                        </button>
+                    </div>
+
+                </div>
+
+            </fieldset>
+
+            <hr />
+
+            <table class="table table-bordered table-light">
+
+                <thead class="thead">
+                    <tr class="table">
+                        <th>ProductoId</th>
+                        <th>Descripción</th>
+                        <th>Costo</th>
+                        <th>Cantidad</th>
+                        <th>Importe</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var detalle in compra.Detalle)
+                    {
+                        <tr>
+                            <td>@detalle.ProductoId</td>
+                            <td></td>
+                            <td>@detalle.Costo</td>
+                            <td>@detalle.Cantidad</td>
+                            <td>@detalle.Importe.ToString("N2") </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+            <hr />
+
+            <div class="row d-flex justify-content-end">
+                <div class="col-3">
+                    <label>Total</label>
+                    <span class="form-control"> @compra.Total.ToString("N2") </span>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-danger" @onclick="DaError"><i class="oi oi-trash" /> Da Error</button>
         </div>
 
         <div class="card-footer d-flex justify-content-center">
             <div class="btn-group" role="group">
-                <button type="button" class="btn btn-primary" > <i class="oi oi-file" /> Nuevo</button>
+                <button type="button" class="btn btn-primary" @onclick="Nuevo"> <i class="oi oi-file" /> Nuevo</button>
                 <button type="submit" class="btn btn-success"> <i class="oi oi-document" /> Guardar</button>
-                <button type="button" class="btn btn-danger"><i class="oi oi-trash" /> Eliminar</button>
+                <button type="button" class="btn btn-danger" @onclick="Eliminar"><i class="oi oi-trash" /> Eliminar</button>
             </div>
         </div>
 
@@ -69,11 +142,58 @@
     {
         var encontrado = comprasBLL.Buscar(compra.CompraId);
         if (encontrado != null)
+        {
             compra = encontrado;
+
+        }
+
     }
 
+    void DaError()
+    {
+        var compra = comprasBLL.Buscar(1);
+
+        comprasBLL.Guardar(compra);
+        comprasBLL.Guardar(compra);
+
+    }
+    void AgregarDetalle()
+    {
+        this.compra.Detalle.Add(this.detalle);
+        this.detalle = new ComprasDetalle();
+    }
+
+    void Nuevo()
+    {
+        this.compra = new Compras();
+    }
     void Guardar()
     {
-        comprasBLL.Guardar(this.compra);
+        if (comprasBLL.Guardar(this.compra))
+        {
+             //notificationService.Success("Registro guardado correctamente");
+            
+            ShowNotification(
+                new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Success,
+                        Summary = "Guardado correctamente"
+                    });
+                     
+        }
+        else
+        { 
+        }
+    }
+
+    void Eliminar()
+    {
+        comprasBLL.Eliminar(this.compra);
+    }
+
+    void ShowNotification(NotificationMessage message)
+    {
+        notificationService.Notify(message);
+
     }
 }
