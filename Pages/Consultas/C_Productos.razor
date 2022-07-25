@@ -1,5 +1,6 @@
 ﻿@page "/Productos"
 @inject ProductosBLL productosBLL
+@inject IJSRuntime iJSRuntime;
 
 <EditForm Model="this">
 
@@ -16,6 +17,9 @@
 
                 <div class="col-3">
                     <button @onclick="Buscar" class="btn btn-primary">
+                        <i class="oi oi-magnifying-glass" />
+                        
+                    </button> <button @onclick="GenerarPdf" class="btn btn-primary">
                         <i class="oi oi-magnifying-glass" />
                     </button>
                 </div>
@@ -66,6 +70,11 @@
     void Buscar()
     {
         productos = productosBLL.GetList();
+    }
+
+    private void GenerarPdf(){
+        Productos productos = new Productos();
+        productos.GenerarPdf(iJSRuntime);
     }
  
 }
