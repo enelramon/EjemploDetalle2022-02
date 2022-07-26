@@ -33,7 +33,8 @@ public class RptResult : PdfFooterPart
         titlePricipal.SpacingAfter = 5;
         _document.Add(titlePricipal);
 
-        Font fonttabla = new Font(Font.TIMES_ROMAN, 12, Font.NORMAL, BaseColor.Black);
+        Font fontHeader = new Font(Font.TIMES_ROMAN, 12, Font.BOLD, BaseColor.Black);
+        Font fontNormal = new Font(Font.TIMES_ROMAN, 12, Font.NORMAL, BaseColor.Black);
 
         //tabla detalle monto mensual
         PdfPTable tblLocal = new PdfPTable(4);
@@ -41,33 +42,31 @@ public class RptResult : PdfFooterPart
         float[] widths = new float[] { 12f, 5f, 3f, 4f };
         tblLocal.SetWidths(widths);
 
-        PdfPCell clDescripcion = new PdfPCell(new Phrase("Descripcion", fonttabla));
-        PdfPCell clExistencia = new PdfPCell(new Phrase("Existencia", fonttabla));
-        PdfPCell clCosto = new PdfPCell(new Phrase("Costo", fonttabla));
-        PdfPCell clPrecio = new PdfPCell(new Phrase("Precio", fonttabla));
+        PdfPCell clID = new PdfPCell(new Phrase("ID", fontHeader));
+        PdfPCell clDescripcion = new PdfPCell(new Phrase("Descripcion", fontHeader));
+        PdfPCell clExistencia = new PdfPCell(new Phrase("Existencia", fontHeader));
+        PdfPCell clCosto = new PdfPCell(new Phrase("Costo", fontHeader));
+        PdfPCell clInventario = new PdfPCell(new Phrase("Valor Inventario", fontHeader));
         
+        tblLocal.AddCell(clID);
         tblLocal.AddCell(clDescripcion);
         tblLocal.AddCell(clExistencia);
         tblLocal.AddCell(clCosto);
-        tblLocal.AddCell(clPrecio);
-      
+        tblLocal.AddCell(clInventario);
 
+        PdfPCell celda = new PdfPCell();
         foreach (var _productos in productos)
         {
-            PdfPCell cldNombre = new PdfPCell(new Phrase(_productos.Descripcion, fonttabla));
-
-            PdfPCell cldTipo = new PdfPCell(new Phrase(_productos.Existencia.ToString(), fonttabla));
-
-            PdfPCell cldnumerolocal = new PdfPCell(new Phrase(_productos.Costo.ToString(), fonttabla));
-
-            PdfPCell cldMonto = new PdfPCell();
-            cldMonto = new PdfPCell(new Phrase(_productos.Precio.ToString("C"), fonttabla));
-            cldMonto.HorizontalAlignment = 2;
-
-            tblLocal.AddCell(cldNombre);
-            tblLocal.AddCell(cldTipo);
-            tblLocal.AddCell(cldnumerolocal);
-            tblLocal.AddCell(cldMonto);
+            celda = new PdfPCell(new Phrase(_productos.ProductoId.ToString(), fontNormal));
+            tblLocal.AddCell(celda);
+            celda = new PdfPCell(new Phrase(_productos.Descripcion, fontNormal));
+            tblLocal.AddCell(celda);
+            celda = new PdfPCell(new Phrase(_productos.Existencia.ToString("C"), fontNormal));
+            tblLocal.AddCell(celda);
+            celda = new PdfPCell(new Phrase(_productos.Costo.ToString("C"), fontNormal));
+            tblLocal.AddCell(celda);
+            celda = new PdfPCell(new Phrase((_productos.Costo*_productos.Existencia).ToString("C"), fontNormal));
+            tblLocal.AddCell(celda);
         }
 
         _document.Add(tblLocal);

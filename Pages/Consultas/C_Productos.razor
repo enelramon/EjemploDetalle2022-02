@@ -1,7 +1,9 @@
 ﻿@page "/Productos"
+
 @inject ProductosBLL productosBLL
-@using EjemploDetalle2022_02.Models;
-@inject IJSRuntime iJSRuntime;
+@inject DialogService DialogService
+
+
 
 <EditForm Model="this">
 
@@ -16,67 +18,90 @@
                 <div class="col-3">
                     <button @onclick="Buscar" class="btn btn-primary">
                         <i class="oi oi-magnifying-glass" />
-                        
-                    </button> <button @onclick="GenerarPdf" class="btn btn-primary">
-                        <i class="oi oi-"/>
                     </button>
                 </div>
             </div>
+            <table class="table table-striped table-hover mt-4" style="cursor: pointer;">
+
+                <thead class="thead">
+                    <tr class="table">
+                        <th>ProductoId</th>
+                        <th>Descripcion</th>
+                        <th>Costo</th>
+                        <th>Precio</th>
+                        <th>Existencia</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var producto in productos)
+                    {
+                        <tr>
+                            <td>@producto.ProductoId</td>
+                            <td>@producto.Descripcion</td>
+                            <td>@producto.Costo</td>
+                            <td>@producto.Precio</td>
+                            <td>@producto.Existencia</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+            <button @onclick="@ShowInlineDialog" class="btn btn-primary">
+                <i class="oi oi-magnifying-glass" />Imprimir
+            </button>
         </div>
+
     </div>
 
-    <table class="table table-striped table-hover mt-4" style="cursor: pointer;">
 
-        <thead class="thead">
-            <tr class="table">
-                <th>ProductoId</th>
-                <th>Descripcion</th>
-                <th>Costo</th>
-                <th>Precio</th>
-                <th>Existencia</th> 
-            </tr>
-        </thead>
 
-        <tbody>
-
-            @foreach (var producto in productos)
-            {
-                <tr>
-                    <td>@producto.ProductoId</td>
-                    <td>@producto.Descripcion</td>
-                    <td>@producto.Costo</td>
-                    <td>@producto.Precio</td>
-                    <td>@producto.Existencia</td> 
-                </tr>
-            }
-
-        </tbody>
-
-    </table>
-
- 
 
 </EditForm>
 
-@code{
+@code {
     public List<Productos> productos { get; set; } = new List<Productos>();
     public int CampoFiltrar { get; set; }
     public string Criterio { get; set; }
+    byte[] reportData;
+    string pdfContent = "";
 
     void Buscar()
     {
         productos = productosBLL.GetList();
     }
 
-    private void GenerarPdf(){
-         RptResult rptResult = new RptResult();
-            iJSRuntime.InvokeAsync<Productos>(
-                "saveAsFile",
-                "Lista_Producto.pdf",
-                Convert.ToBase64String(rptResult.Report(productos))
-            );
-       // Productos producto = new Productos();
-       // producto.GenerarPdf(iJSRuntime,productos);
+    private void GenerarPdf()
+    {
+        RptResult rptResult = new RptResult();
+        reportData = rptResult.Report(productos);
+        pdfContent = "data:application/pdf;base64," + System.Convert.ToBase64String(reportData);
     }
- 
+    async Task ShowInlineDialog()
+    {
+        RptResult rptResult = new RptResult();
+        reportData = rptResult.Report(productos);
+        pdfContent = "data:application/pdf;base64," + System.Convert.ToBase64String(reportData);
+
+        var result = await DialogService.OpenAsync("Simple Dialog", ds =>
+    @<div>
+        @if (reportData is { })
+        {
+                <object data="@pdfContent" width="800" height="600" name="_blank" />
+        }
+            <div class="row">
+                <div class="col">
+
+                    <RadzenButton Text="Cerrar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Secondary" Class="mr-1" />
+
+
+                </div>
+            </div>
+        </div>);
+    }
+
+
 }
