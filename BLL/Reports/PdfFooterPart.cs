@@ -15,7 +15,6 @@ namespace EjemploDetalle2022_02.BLL.Reports
         {
             var numberTable = new PdfPTable(1);
             string text = "Page No : " + writer.PageNumber.ToString("00");
-            string text1 = "Generated time : " + DateTime.Now.ToString("dddd/MMMM/YYYY");
             
             var pdfCell = new PdfPCell(new Phrase(text, _pageNumberFont));
             pdfCell.HorizontalAlignment = Element.ALIGN_RIGHT;
