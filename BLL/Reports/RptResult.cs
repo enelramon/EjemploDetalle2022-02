@@ -9,7 +9,6 @@ public class RptResult : PdfFooterPart
     Document _document;
     Font _fontStyle;
     MemoryStream _memotyStream = new MemoryStream();
-    //Productos _productos = new Productos();
 
     public byte[] Report(List<Productos> productos)
     {
@@ -51,6 +50,7 @@ public class RptResult : PdfFooterPart
 
         Double total = 0.0;
 
+        PdfPCell celda = new PdfPCell();
         foreach (var _productos in productos)
         {
             PdfPCell cellItemCodigo = new PdfPCell(new Phrase(_productos.ProductoId.ToString(), fontItems));
