@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using EjemploDetalle2022_02.BLL;
 using Radzen;
+using Radzen.Blazor;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,7 @@ builder.Services.AddScoped<ComprasBLL>();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<DialogService>();
 
 
 var app = builder.Build();
