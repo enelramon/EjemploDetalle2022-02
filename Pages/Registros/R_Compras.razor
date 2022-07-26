@@ -34,11 +34,8 @@
                 </div>
             </div>
 
-
             <fieldset class="border-success">
-
                 <div class="row">
-
                     <div class="col-2">
                         <label>Producto</label>
                         <InputSelect class="form-select" @bind-Value="detalle.ProductoId">
@@ -48,7 +45,6 @@
                                 <option value="@producto.ProductoId"> @producto.Descripcion</option>
                             }
                         </InputSelect>
-
                     </div>
 
                     <div class="col-2">
@@ -144,25 +140,20 @@
         if (encontrado != null)
         {
             compra = encontrado;
-
         }
-
     }
 
     void DaError()
     {
         var compra = comprasBLL.Buscar(1);
-
         comprasBLL.Guardar(compra);
         comprasBLL.Guardar(compra);
-
     }
     void AgregarDetalle()
     {
         this.compra.Detalle.Add(this.detalle);
         this.detalle = new ComprasDetalle();
     }
-
     void Nuevo()
     {
         this.compra = new Compras();
@@ -178,11 +169,10 @@
                     {
                         Severity = NotificationSeverity.Success,
                         Summary = "Guardado correctamente"
-                    });
-                     
+                    });  
         }
         else
-        { 
+        {
         }
     }
 
@@ -194,6 +184,5 @@
     void ShowNotification(NotificationMessage message)
     {
         notificationService.Notify(message);
-
     }
 }
